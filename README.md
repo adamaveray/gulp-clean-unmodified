@@ -2,7 +2,7 @@
 
 [![View code coverage on codecov][codecov-badge]][codecov]
 
-[codecov]: https://codecov.io/gh/adamaveray/gulp-clean-unmodified;
+[codecov]: https://codecov.io/gh/adamaveray/gulp-clean-unmodified
 [codecov-badge]: https://codecov.io/gh/adamaveray/gulp-clean-unmodified/branch/main/graph/badge.svg
 
 A Gulp plugin to remove unmodified files after tasks have completed.
