@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { Transform } from 'node:stream';
 import fs from 'fs'; // Cannot use prefix to allow mocking
 import logger from 'gulplog';
@@ -40,6 +41,7 @@ export default class UnmodifiedCleaner {
    * @param directoryPathname The path to the destination directory to clean
    */
   public clean(directoryPathname: string): void {
+    directoryPathname = resolve(directoryPathname);
     this.cleanDir(directoryPathname, true);
   }
 

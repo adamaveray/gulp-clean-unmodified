@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import * as fs from 'fs';
 import logger from 'gulplog';
@@ -7,7 +8,7 @@ import Vinyl from 'vinyl';
 import UnmodifiedCleaner from '../src/UnmodifiedCleaner';
 import { collateStream, makeFiles } from './lib';
 
-const MOCKFS_ROOT = '__mockfs';
+const MOCKFS_ROOT = resolve('__mockfs');
 
 jest.mock('gulplog');
 const mockLogger: jest.Mocked<typeof logger> = logger as any;
