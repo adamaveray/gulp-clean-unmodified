@@ -14,8 +14,6 @@ jest.mock('gulplog');
 const mockLogger: jest.Mocked<typeof logger> = logger as any;
 
 describe('UnmodifiedCleaner', () => {
-  beforeEach(() => {});
-
   afterEach(() => {
     mockFs.restore();
   });
