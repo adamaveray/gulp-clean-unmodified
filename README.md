@@ -13,15 +13,16 @@ A usual Gulp workflow is first cleaning the destination directory, then writing 
 
 For simple cases, first import the plugin:
 
-```
+```js
 import cleaner from '@averay/gulp-clean-unmodified';
 ```
 
 Next, register created files by piping `.register()` in to the end of all streams:
 
-```
+```js
 export function css() {
-  gulp.src('src/**/*.scss')
+  gulp
+    .src('src/**/*.scss')
     // (Other plugins)
     .pipe(gulp.dest('dest'))
     .pipe(cleaner.register());
@@ -30,7 +31,7 @@ export function css() {
 
 Finally, call `.clean()` in a subsequent task to remove unmodified files, providing the path to the output directory root:
 
-```
+```js
 // Either async
 export async function clean() {
   cleaner.clean('dest');
@@ -46,7 +47,7 @@ _(Note that for a simple clean task like this either the function must be asynch
 
 The two tasks must then be run in series:
 
-```
+```js
 export const build = gulp.series(css, clean);
 ```
 
