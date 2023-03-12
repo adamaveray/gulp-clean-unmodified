@@ -1,9 +1,10 @@
-import { makeEslintConfig } from '@averay/codeformat';
-import globals from 'globals';
+/* eslint sort-keys: "error" -- Organise rules */
+
+import { globals, makeEslintConfig } from '@averay/codeformat';
 
 export default [
   {
-    ignores: ['dist/**/*'],
+    ignores: ['coverage/**/*', 'dist/**/*'],
   },
   ...makeEslintConfig({ tsconfigPath: './tsconfig.json' }),
   {
@@ -18,8 +19,7 @@ export default [
       globals: { ...globals.node, ...globals.jest, NodeJS: 'readonly' },
     },
     rules: {
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'off',
+      'unicorn/prefer-module': 'off',
     },
   },
 ];
