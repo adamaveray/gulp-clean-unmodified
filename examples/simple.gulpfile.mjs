@@ -1,3 +1,5 @@
+/* eslint import/no-unresolved: "off" -- For demonstration only */
+
 import cleaner from '@averay/gulp-clean-unmodified';
 import gulp from 'gulp';
 

@@ -1,4 +1,5 @@
-import type { Stream } from 'node:stream';
+import { type Stream } from 'node:stream';
+
 import Vinyl from 'vinyl';
 
 export function makeFile(path: string, contents: Buffer | NodeJS.ReadableStream | null = null): Vinyl {

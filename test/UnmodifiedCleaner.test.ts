@@ -1,17 +1,19 @@
+import * as fs from 'node:fs';
 import { resolve } from 'node:path';
 import { Readable } from 'node:stream';
-import * as fs from 'fs';
+
 import logger from 'gulplog';
 import mockFs from 'mock-fs';
 import Vinyl from 'vinyl';
 
 import UnmodifiedCleaner from '../src/UnmodifiedCleaner';
+
 import { collateStream, makeFiles } from './lib';
 
 const MOCKFS_ROOT = resolve('__mockfs');
 
 jest.mock('gulplog');
-const mockLogger: jest.Mocked<typeof logger> = logger as any;
+const mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('UnmodifiedCleaner', () => {
   afterEach(() => {
@@ -19,9 +21,7 @@ describe('UnmodifiedCleaner', () => {
   });
 
   it('instantiates', () => {
-    expect(() => {
-      new UnmodifiedCleaner();
-    }).not.toThrow();
+    expect(() => new UnmodifiedCleaner()).not.toThrow();
   });
 
   it('stores & resets files', async () => {
@@ -42,14 +42,16 @@ describe('UnmodifiedCleaner', () => {
   });
 
   it('removes files', async () => {
+    const exampleContent = 'Example file';
+    /* eslint-disable id-denylist -- Testing use */
     mockFs({
       [MOCKFS_ROOT]: {
-        'a.txt': 'Example file',
-        'b.txt': 'Example file',
+        'a.txt': exampleContent,
+        'b.txt': exampleContent,
         c: {
-          'one.txt': 'Example file',
+          'one.txt': exampleContent,
           two: {
-            'inner.txt': 'Example file',
+            'inner.txt': exampleContent,
           },
           three: {},
         },
@@ -58,12 +60,13 @@ describe('UnmodifiedCleaner', () => {
         },
         e: {
           one: {
-            'inner.txt': 'Example file',
+            'inner.txt': exampleContent,
           },
-          'two.txt': 'Example file',
+          'two.txt': exampleContent,
         },
       },
     });
+    /* eslint-enable id-denylist -- Testing use */
 
     const inputFiles: Vinyl[] = makeFiles([
       `${MOCKFS_ROOT}/a.txt`,
@@ -77,7 +80,7 @@ describe('UnmodifiedCleaner', () => {
 
     const debugCalls = mockLogger.debug.mock.calls as unknown as [string, string][];
 
-    const expectToExistAndNotBeLogged = (pathname: string) => {
+    const expectToExistAndNotBeLogged = (pathname: string): void => {
       expect(fs.existsSync(pathname)).toBeTruthy();
       // Should never be logged
       expect(debugCalls.find((call) => call[1] === pathname)).toBeUndefined();
@@ -88,7 +91,7 @@ describe('UnmodifiedCleaner', () => {
     expectToExistAndNotBeLogged(`${MOCKFS_ROOT}/e/one`);
     expectToExistAndNotBeLogged(`${MOCKFS_ROOT}/e/one/inner.txt`);
 
-    const expectNotToExistAndBeLogged = (pathname: string) => {
+    const expectNotToExistAndBeLogged = (pathname: string): void => {
       expect(fs.existsSync(pathname)).toBeFalsy();
       // Should only be logged once
       expect(debugCalls.filter((call) => call[1] === pathname).length).toEqual(1);

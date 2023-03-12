@@ -1,6 +1,7 @@
+import fs from 'fs'; // eslint-disable-line unicorn/prefer-node-protocol -- Cannot use prefix to allow mocking
 import { resolve } from 'node:path';
 import { Transform } from 'node:stream';
-import fs from 'fs'; // Cannot use prefix to allow mocking
+
 import logger from 'gulplog';
 import type Vinyl from 'vinyl';
 
