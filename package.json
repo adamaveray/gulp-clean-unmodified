@@ -46,11 +46,6 @@
       "./src/index.ts"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run lint && npm run test"
-    }
-  },
   "peerDependencies": {
     "gulplog": "^2.0.1"
   },
