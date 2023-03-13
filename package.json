@@ -58,7 +58,7 @@
     "gulplog": "^2.0.1"
   },
   "devDependencies": {
-    "@averay/codeformat": "^0.1.6",
+    "@averay/codeformat": "^0.1.7",
     "@babel/preset-typescript": "^7.21.0",
     "@types/jest": "^29.4.0",
     "@types/mock-fs": "^4.13.1",
