@@ -1,4 +1,4 @@
-import fs from 'node:fs'; // Cannot use prefix to allow mocking
+import fs from 'node:fs';
 import { join as joinPath } from 'node:path';
 
 interface Entry {

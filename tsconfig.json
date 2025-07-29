@@ -1,27 +1,9 @@
 {
+  "extends": "./node_modules/@averay/codeformat/tsconfig.base.json",
   "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
     "baseUrl": ".",
-    "esModuleInterop": true,
-    "exactOptionalPropertyTypes": false,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "moduleResolution": "node",
-    "noEmit": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext",
-    "types": ["node", "jest"]
+    "moduleResolution": "Node",
+    "target": "ESNext"
   },
   "include": ["./src/**/*", "./test/**/*"]
 }

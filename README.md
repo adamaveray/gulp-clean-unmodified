@@ -1,10 +1,5 @@
 # @averay/gulp-clean-unmodified
 
-[![View code coverage on codecov][codecov-badge]][codecov]
-
-[codecov]: https://codecov.io/gh/adamaveray/gulp-clean-unmodified
-[codecov-badge]: https://codecov.io/gh/adamaveray/gulp-clean-unmodified/branch/main/graph/badge.svg
-
 A Gulp plugin to remove unmodified files after tasks have completed.
 
 A usual Gulp workflow is first cleaning the destination directory, then writing the generated files to it. For situations where the destination directory is being watched or otherwise in use, the gap between the old files being removed and the new files being written can cause issues or unnecessary reloads. This plugin allows reversing the order, by first writing the generated files to the destination directory (overwriting any existing files), then after going through and removing any outdated files, ensuring files that persist the previous build and the new build remain present throughout the process.

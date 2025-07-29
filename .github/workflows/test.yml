@@ -1,0 +1,41 @@
+---
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches: ['*']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: development
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Bun ${{ matrix.bun-version }}
+        uses: oven-sh/setup-bun@v1
+        with: { bun-version: latest }
+
+      - name: Cache NPM packages
+        uses: actions/cache@v3
+        env: { cache-name: npm }
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-test-${{ env.cache-name }}-
+            ${{ runner.os }}-test-
+            ${{ runner.os }}-
+
+      - name: Install NPM packages
+        run: bun install --frozen-lockfile
+
+      - name: Run tests
+        run: bun test

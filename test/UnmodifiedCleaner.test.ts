@@ -1,23 +1,24 @@
+import { describe, afterEach, it, expect, beforeEach } from 'bun:test';
 import * as fs from 'node:fs';
-import { resolve } from 'node:path';
 import { Readable } from 'node:stream';
 
-import logger from 'gulplog';
-import mockFs from 'mock-fs';
 import Vinyl from 'vinyl';
 
 import UnmodifiedCleaner from '../src/UnmodifiedCleaner';
 
 import { collateStream, makeFiles } from './lib';
-
-const MOCKFS_ROOT = resolve('__mockfs');
-
-jest.mock('gulplog');
-const mockLogger = logger as jest.Mocked<typeof logger>;
+import { getMockGulpLog } from './lib/mocks.ts';
+import { dumpFs, getTempDir } from './lib/fs.ts';
 
 describe('UnmodifiedCleaner', () => {
+  let FS_ROOT: string;
+
+  beforeEach(() => {
+    FS_ROOT = getTempDir('gulp-clean-unmodified-test-fs-');
+  });
+
   afterEach(() => {
-    mockFs.restore();
+    fs.rmdirSync(FS_ROOT, { recursive: true });
   });
 
   it('instantiates', () => {
@@ -27,7 +28,7 @@ describe('UnmodifiedCleaner', () => {
   it('stores & resets files', async () => {
     const instance = new UnmodifiedCleaner();
 
-    const inputFiles: Vinyl[] = makeFiles([`${MOCKFS_ROOT}/one`, `${MOCKFS_ROOT}/two`]);
+    const inputFiles: Vinyl[] = makeFiles([`${FS_ROOT}/one`, `${FS_ROOT}/two`]);
     const outputFiles: Vinyl[] = await collateStream<Vinyl>(Readable.from(inputFiles).pipe(instance.register()));
 
     // Ensure files are passed through
@@ -42,10 +43,12 @@ describe('UnmodifiedCleaner', () => {
   });
 
   it('removes files', async () => {
+    const mockLogger = await getMockGulpLog();
+
     const exampleContent = 'Example file';
     /* eslint-disable id-denylist -- Testing use */
-    mockFs({
-      [MOCKFS_ROOT]: {
+    dumpFs({
+      [FS_ROOT]: {
         'a.txt': exampleContent,
         'b.txt': exampleContent,
         c: {
@@ -68,15 +71,11 @@ describe('UnmodifiedCleaner', () => {
     });
     /* eslint-enable id-denylist -- Testing use */
 
-    const inputFiles: Vinyl[] = makeFiles([
-      `${MOCKFS_ROOT}/a.txt`,
-      `${MOCKFS_ROOT}/c/one.txt`,
-      `${MOCKFS_ROOT}/e/one/inner.txt`,
-    ]);
+    const inputFiles: Vinyl[] = makeFiles([`${FS_ROOT}/a.txt`, `${FS_ROOT}/c/one.txt`, `${FS_ROOT}/e/one/inner.txt`]);
 
     const instance = new UnmodifiedCleaner();
     await collateStream<Vinyl>(Readable.from(inputFiles).pipe(instance.register()));
-    instance.clean(MOCKFS_ROOT);
+    instance.clean(FS_ROOT);
 
     const debugCalls = mockLogger.debug.mock.calls as unknown as [string, string][];
 
@@ -85,33 +84,35 @@ describe('UnmodifiedCleaner', () => {
       // Should never be logged
       expect(debugCalls.find((call) => call[1] === pathname)).toBeUndefined();
     };
-    expectToExistAndNotBeLogged(`${MOCKFS_ROOT}/a.txt`);
-    expectToExistAndNotBeLogged(`${MOCKFS_ROOT}/c`);
-    expectToExistAndNotBeLogged(`${MOCKFS_ROOT}/c/one.txt`);
-    expectToExistAndNotBeLogged(`${MOCKFS_ROOT}/e/one`);
-    expectToExistAndNotBeLogged(`${MOCKFS_ROOT}/e/one/inner.txt`);
+    expectToExistAndNotBeLogged(`${FS_ROOT}/a.txt`);
+    expectToExistAndNotBeLogged(`${FS_ROOT}/c`);
+    expectToExistAndNotBeLogged(`${FS_ROOT}/c/one.txt`);
+    expectToExistAndNotBeLogged(`${FS_ROOT}/e/one`);
+    expectToExistAndNotBeLogged(`${FS_ROOT}/e/one/inner.txt`);
 
     const expectNotToExistAndBeLogged = (pathname: string): void => {
       expect(fs.existsSync(pathname)).toBeFalsy();
       // Should only be logged once
       expect(debugCalls.filter((call) => call[1] === pathname).length).toEqual(1);
     };
-    expectNotToExistAndBeLogged(`${MOCKFS_ROOT}/b.txt`);
-    expectNotToExistAndBeLogged(`${MOCKFS_ROOT}/c/two/inner.txt`);
-    expectNotToExistAndBeLogged(`${MOCKFS_ROOT}/c/two`);
-    expectNotToExistAndBeLogged(`${MOCKFS_ROOT}/c/three`);
-    expectNotToExistAndBeLogged(`${MOCKFS_ROOT}/d/one`);
-    expectNotToExistAndBeLogged(`${MOCKFS_ROOT}/d`);
-    expectNotToExistAndBeLogged(`${MOCKFS_ROOT}/e/two.txt`);
+    expectNotToExistAndBeLogged(`${FS_ROOT}/b.txt`);
+    expectNotToExistAndBeLogged(`${FS_ROOT}/c/two/inner.txt`);
+    expectNotToExistAndBeLogged(`${FS_ROOT}/c/two`);
+    expectNotToExistAndBeLogged(`${FS_ROOT}/c/three`);
+    expectNotToExistAndBeLogged(`${FS_ROOT}/d/one`);
+    expectNotToExistAndBeLogged(`${FS_ROOT}/d`);
+    expectNotToExistAndBeLogged(`${FS_ROOT}/e/two.txt`);
   });
 
   it('handles pathname-less files gracefully', async () => {
+    const mockLogger = await getMockGulpLog();
+
     const file = new Vinyl();
 
     const instance = new UnmodifiedCleaner();
     await collateStream<Vinyl>(Readable.from([file]).pipe(instance.register()));
 
-    const warnCalls = mockLogger.warn.mock.calls as unknown as [string, string][];
+    const warnCalls = mockLogger.warn.mock.calls as unknown as [string, Vinyl][];
     expect(warnCalls.length).toEqual(1);
     expect(warnCalls[0]?.[1]).toEqual(file);
   });

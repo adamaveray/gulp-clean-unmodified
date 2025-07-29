@@ -1,0 +1,8 @@
+.*
+bun.lock
+eslint.config.js
+stylelint.config.mjs
+
+node_modules
+/examples
+/test

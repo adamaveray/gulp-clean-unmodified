@@ -1,1 +1,8 @@
-node_modules/@averay/codeformat/.prettierrc.json
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "arrowParens": "always",
+  "proseWrap": "never",
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all"
+}

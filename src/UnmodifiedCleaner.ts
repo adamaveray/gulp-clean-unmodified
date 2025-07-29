@@ -1,4 +1,4 @@
-import fs from 'fs'; // eslint-disable-line unicorn/prefer-node-protocol -- Cannot use prefix to allow mocking
+import fs from 'node:fs';
 import { resolve } from 'node:path';
 import { Transform } from 'node:stream';
 
@@ -23,7 +23,7 @@ export default class UnmodifiedCleaner {
   public register(): Transform {
     return new Transform({
       objectMode: true,
-      transform: (file: Vinyl, encoding, callback): void => {
+      transform: (file: Vinyl, _, callback): void => {
         const pathname = file.path as string | undefined; // (Types are inaccurate)
         if (pathname == null) {
           logger.warn('Failed registering file with empty pathname: %s', file);
