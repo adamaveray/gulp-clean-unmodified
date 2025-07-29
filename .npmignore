@@ -2,6 +2,7 @@
 bun.lock
 eslint.config.js
 stylelint.config.mjs
+renovate.json
 
 node_modules
 /examples
