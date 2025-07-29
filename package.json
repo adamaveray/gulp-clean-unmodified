@@ -2,7 +2,7 @@
   "name": "@averay/gulp-clean-unmodified",
   "author": "Adam Averay (https://adamaveray.com.au/)",
   "description": "A Gulp plugin to remove unmodified files after tasks have completed.",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "license": "MIT",
   "type": "module",
   "exports": {
